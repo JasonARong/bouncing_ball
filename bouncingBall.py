@@ -8,28 +8,30 @@ from birthData import BirthData
 pygame.init()
 
 # Define colors (RGB)
-WHITE = (255, 255, 255)
+WHITE = (240, 240, 240)
+GREY = (210, 210, 210)
 BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
+RED = (240, 84, 84)
+BLUE = (0, 89, 213)
 GREEN = (0, 255, 0)
 ball_colors = [RED, GREEN, BLUE]
 
 # Screen dimensions
 screen_width = 550
-screen_height = 550
+screen_height = 750
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Bouncing Ball Simulation")
+pygame.display.set_caption("Bouncing Ball Data Visualization")
 
 # Set up font
 font = pygame.font.Font(None, 36) 
+small_font = pygame.font.Font(None, 24) 
 
 # Circle properties
 circle_radius = 200
 circle_center = np.array([screen_width // 2, screen_height // 2], dtype=float)
 
 # Ball properties
-ball_radius = 3
+ball_radius = 6
 GRAVITY = np.array([0, 0])  # Gravity vector (no gravity in this case)
 
 # Initialize birth_data object
@@ -139,7 +141,7 @@ circle = Circle(circle_center, circle_radius)
 
 # Get initial data from csv and set up ball number 
 future.result()
-inital_data = birth_data.read_current_entry()
+inital_data = birth_data.get_curr_balls()
 year = int(inital_data[0])
 male_balls = inital_data[2]
 female_balls = inital_data[3]
@@ -147,20 +149,30 @@ balls = []
 create_balls(balls, male_balls, 'male')
 create_balls(balls, female_balls, 'female')
 
+inital_birth_data = birth_data.read_current_entry()
+male_births = inital_birth_data[2]
+female_births = inital_birth_data[3]
+
 def handle_year_change(next):
     global male_balls
     global female_balls
+    global male_births
+    global female_births
 
     if next == True:
         birth_data.next_year()
     elif next == False:
         birth_data.previous_year()
 
-    current_data = birth_data.read_current_entry()
+    current_data = birth_data.get_curr_balls()
     curr_male_balls = current_data[2]
     curr_female_balls = current_data[3]
     male_balls_diff = curr_male_balls - male_balls
     female_balls_diff = curr_female_balls - female_balls
+
+    current_birth_data = birth_data.read_current_entry()
+    curr_male_births = current_birth_data[2]
+    curr_female_births = current_birth_data[3]
 
     if male_balls_diff > 0:
         create_balls(balls, male_balls_diff, 'male')
@@ -176,10 +188,12 @@ def handle_year_change(next):
     
     male_balls = curr_male_balls
     female_balls = curr_female_balls
+    male_births = curr_male_births
+    female_births = curr_female_births
 
-    print('current male: ' + str(male_balls))
-    print('current female: ' + str(female_balls))
-    print('total ball count: ' + str(len(balls)))
+    # print('current male: ' + str(male_balls))
+    # print('current female: ' + str(female_balls))
+    # print('total ball count: ' + str(len(balls)))
 
 
 # Main game loop
@@ -187,29 +201,36 @@ while running:
     screen.fill(BLACK)  # Clear the screen
     pygame.draw.circle(screen, WHITE, circle_center, circle_radius, width=1)  # Draw circle boundary
 
-    # Create the text surface
-    text = font.render(str(year), True, WHITE)
-    text_rect = text.get_rect()
-    text_rect.topright = (screen_width - 10, 10)  # 10 pixels from the right and top
-    screen.blit(text, text_rect)
+    # Create all the in-game Text
+    year_text = font.render(str(year), True, WHITE)
+    year_text_rect = year_text.get_rect()
+    year_text_rect.topright = (screen_width - 10, 10)  
+    screen.blit(year_text, year_text_rect)
+
+    title_text = font.render('US Number of Births Per Year', True, WHITE)
+    title_text_rect = title_text.get_rect()
+    title_text_rect.topleft = (10, 10)  
+    screen.blit(title_text, title_text_rect)
+
+    male_text = small_font.render('Male Birth: ' + str(male_births), True, GREY)
+    male_text_rect = male_text.get_rect()
+    male_text_rect.topleft = (10, 84)  
+    screen.blit(male_text, male_text_rect)
+    
+    female_text = small_font.render('Female Birth: ' + str(female_births), True, GREY)
+    female_text_rect = female_text.get_rect()
+    female_text_rect.topleft = (10, 60)  
+    screen.blit(female_text, female_text_rect)
+
+    instruction_text = small_font.render('Press LEFT or RIGHT Arrow Key to Change Year', True, WHITE)
+    instruction_text_rect = instruction_text.get_rect()
+    instruction_text_rect.bottomleft = (10, screen_height - 10)  
+    screen.blit(instruction_text, instruction_text_rect)
 
     # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False  # Exit the loop
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Add new ball at mouse click position
-            # mouse_pos = np.array(pygame.mouse.get_pos(), dtype=float)
-            # if is_point_in_circle(mouse_pos, circle_center, circle_radius):
-            #     new_color = ball_colors[len(balls) % len(ball_colors)]  # Cycle colors
-            #     new_ball = Ball(mouse_pos, create_random_velocity(), ball_radius, new_color)
-            #     balls.append(new_ball)
-
-            # Delete ball on click
-            # balls.pop(1)
-            delete_balls(balls, 1, 'male')
-            print('after delete balls: ' + str(len(balls)))
-            
             
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:

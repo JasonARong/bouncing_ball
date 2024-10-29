@@ -9,11 +9,6 @@ class BirthData:
         self.current_index = 0  # To track the current year
         self.executor = ThreadPoolExecutor(max_workers=1)
 
-        # Load CSV data into self.data
-        # with open(csv_file, mode='r') as file:
-        #     reader = csv.reader(file)
-        #     next(reader)  # Skip the header
-        #     self.data = list(reader)
         
     def load_data(self):
         """Load the CSV data asynchronously."""
@@ -50,21 +45,20 @@ class BirthData:
         print(f"Year {year} not found in the dataset.")
 
     
-    def data_to_balls(self, entry):
+    def get_curr_balls(self):
+        """Return the current ball number"""
         # make each year's ball number proportion to each other
         # e.g. 2125000 -> 21; (21-10) / (30-10)
-        entry[2] = math.ceil((float(entry[2])/100000 - 10)/20 * 100)
-        entry[3] = math.ceil((float(entry[3])/100000 - 10)/20 * 100)
-        return entry
+        current_entry = self.data[self.current_index]
+        current_entry_copy = current_entry.copy()        
+        current_entry_copy[2] = math.ceil((float(current_entry_copy[2])/100000 - 10)/20 * 100)
+        current_entry_copy[3] = math.ceil((float(current_entry_copy[3])/100000 - 10)/20 * 100)
+        return current_entry_copy
     
     def read_current_entry(self):
-        """Return the content of the current entry and print it out."""
+        """Return the content of the current entry."""
         current_entry = self.data[self.current_index]
-        current_entry_copy = current_entry.copy()
-        print('og: ' + str(current_entry_copy))
-        current_entry_copy = self.data_to_balls(current_entry_copy)
-        print(current_entry_copy)
-        return current_entry_copy
+        return current_entry
         
 
 
