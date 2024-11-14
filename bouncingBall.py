@@ -1,3 +1,24 @@
+"""
+Bouncing Balls Game
+================================
+
+This script is the main logic that simulates bouncing balls inside a circular boundary with collision.
+The the number of red and blue balls symbolizes the relative male and female birth population 
+of each year from 1924 to 2023 in the U.S.
+
+Author: Jiecheng Chen
+Date: 11/13/2024
+
+References:
+ - ChatGPT
+ - https://www.youtube.com/watch?v=4Mx9QmiEfjo
+ - https://www.youtube.com/watch?v=SIjb8lfSNoc&t=84s
+
+Copyright © 2024 Jiecheng Chen
+All rights reserved.
+
+"""
+
 import pygame
 import math
 import random

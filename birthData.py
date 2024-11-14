@@ -1,3 +1,20 @@
+"""
+Birth Data Process
+================================
+
+This script reads and processes data from the us_birth_population_1924_2023.csv file
+
+Author: Jiecheng Chen
+Date: 11/13/2024
+
+References:
+ - ChatGPTs
+
+Copyright © 2024 Jiecheng Chen
+All rights reserved.
+
+"""
+
 import csv
 import math
 from concurrent.futures import ThreadPoolExecutor
